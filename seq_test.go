@@ -81,3 +81,25 @@ func TestClaimUsed(t *testing.T) {
 		t.Fatalf("expect %d got %d", availNo, n)
 	}
 }
+
+func TestGetNo(t *testing.T) {
+	ctx, e := prepareOrm()
+	if e != nil {
+		t.Error(e.Error())
+	}
+	defer ctx.Close()
+
+	numseq.SetDataHub(ctx)
+	ctx.Execute(dbflex.From(new(numseq.Sequence).TableName()).Delete().Where(dbflex.Eq("_id", "GetNo")), nil)
+	ctx.Execute(dbflex.From(new(numseq.UsedSequence).TableName()).Delete().Where(dbflex.Eq("SequenceNo", "GetNo")), nil)
+
+	ns := numseq.NewSequence("GetNo")
+	ns.ReuseNumber = true
+	ns.Format = "GN%05d"
+	ns.Save()
+
+	res := numseq.GetNo("GetNo")
+	if res != "GN00001" {
+		t.Fatal("expect GN00001 got " + res)
+	}
+}
