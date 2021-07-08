@@ -1,6 +1,7 @@
 package numseq
 
 import (
+	"errors"
 	"time"
 
 	"git.kanosolution.net/kano/dbflex"
@@ -28,6 +29,9 @@ func (u *UsedSequence) SetID(keys ...interface{}) {
 func (u *UsedSequence) PreSave(dbflex.IConnection) error {
 	if u.ID == "" {
 		u.ID = primitive.NewObjectID().Hex()
+	}
+	if u.SequenceID == "" || u.No == 0 || u.Status == "" {
+		return errors.New("data is not complete")
 	}
 	if u.Status == string(NumberStatus_Used) {
 		u.Used = time.Now()

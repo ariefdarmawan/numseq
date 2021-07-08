@@ -36,7 +36,9 @@ func TestClaim(t *testing.T) {
 	defer ctx.Close()
 
 	numseq.SetDataHub(ctx)
-	s, e := numseq.Get("General", false)
+	ctx.DeleteQuery(new(numseq.UsedSequence), dbflex.Eq("SequenceID", "General"))
+
+	s, e := numseq.Get("General", true)
 	if e != nil {
 		t.Error(e.Error())
 	}
@@ -58,10 +60,10 @@ func TestClaimUsed(t *testing.T) {
 	}
 	defer ctx.Close()
 
-	ctx.DeleteQuery(new(numseq.UsedSequence), dbflex.Eq("SequenceID", "General"))
+	ctx.DeleteQuery(new(numseq.UsedSequence), dbflex.Eq("SequenceID", "GeneralWithReuse"))
 
 	numseq.SetDataHub(ctx)
-	s, e := numseq.Get("General", false)
+	s, e := numseq.Get("GeneralWithReuse", true)
 	if e != nil {
 		t.Error(e.Error())
 	}

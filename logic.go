@@ -55,6 +55,7 @@ func Get(id string, init bool) (*Sequence, error) {
 		if init {
 			s.ID = id
 			s.ReuseNumber = true
+			s.LastNo = 0
 			e = nil
 		} else {
 			e = fmt.Errorf("get fail. %s", "Not found")
@@ -67,7 +68,12 @@ func (s *Sequence) ChangeNumberStatus(n int, status NumberStatus) error {
 	if dh == nil {
 		return fmt.Errorf("method: ChangeNumberStatus, error: %s", "Datahub not yet initialized")
 	}
-	used := NewUsedSequence(s.ID, n, status)
+	used := new(UsedSequence)
+	if e := dh.GetByFilter(used, dbflex.And(dbflex.Eq("SequenceID", s.ID), dbflex.Eq("No", n))); e != nil {
+		used = NewUsedSequence(s.ID, n, status)
+	} else {
+		used.Status = string(status)
+	}
 	e := dh.Save(used)
 	if e != nil {
 		return fmt.Errorf("method: %s, error: %s", "ChangeNumberStatus", e.Error())
