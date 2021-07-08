@@ -125,6 +125,9 @@ func (s *Sequence) ClaimString() (string, error) {
 	if e != nil {
 		return "", e
 	}
+	if s.Format == "" {
+		return fmt.Sprintf("%d", i), nil
+	}
 	return fmt.Sprintf(s.Format, i), nil
 }
 
