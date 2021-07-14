@@ -41,6 +41,10 @@ func NewUsedSequence(sequenceid string, no int, status NumberStatus) *UsedSequen
 }
 
 func Get(id string, init bool) (*Sequence, error) {
+	return GetOrCreate(id, init, "%010d")
+}
+
+func GetOrCreate(id string, init bool, format string) (*Sequence, error) {
 	if dh == nil {
 		return nil, fmt.Errorf("method: %s, error: %s",
 			"Get", "Datahub not yet initialized")
@@ -55,6 +59,7 @@ func Get(id string, init bool) (*Sequence, error) {
 		//fmt.Printf("Error: %s Found: %v\n", e.Error(), strings.Contains(e.Error(), "Not found"))
 		if init {
 			s.ID = id
+			s.Format = format
 			s.ReuseNumber = true
 			s.LastNo = 0
 			e = nil
