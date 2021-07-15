@@ -62,7 +62,7 @@ func GetOrCreate(id string, init bool, format string) (*Sequence, error) {
 			s.Format = format
 			s.ReuseNumber = true
 			s.LastNo = 0
-			e = nil
+			e = dh.Save(s)
 		} else {
 			e = fmt.Errorf("get fail. %s", "Not found")
 		}
