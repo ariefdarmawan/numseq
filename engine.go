@@ -108,7 +108,7 @@ func (eng *Engine) Claim(id string) (int, string, error) {
 	return ret, latest.Format, e
 }
 
-func (eng *Engine) ClaimString(id string, date *time.Time) (string, error) {
+func (eng *Engine) ClaimString(id string, parseDate bool, date time.Time) (string, error) {
 	i, format, e := eng.Claim(id)
 
 	if e != nil {
@@ -119,15 +119,15 @@ func (eng *Engine) ClaimString(id string, date *time.Time) (string, error) {
 		return fmt.Sprintf("%d", i), nil
 	}
 
-	if date != nil {
+	if parseDate {
 		format = strings.ReplaceAll(format, "$year", strconv.Itoa(date.Year()))
-		format = strings.ReplaceAll(format, "$month", codekit.Date2String(*date, "MM"))
+		format = strings.ReplaceAll(format, "$month", codekit.Date2String(date, "MM"))
 	}
 
 	return fmt.Sprintf(format, i), nil
 }
 
-func (eng *Engine) GetNo(id string, date *time.Time) string {
+func (eng *Engine) GetNo(id string, parseDate bool, date time.Time) string {
 	var e error
 	conn := eng.conn
 	ns := new(Sequence)
@@ -136,7 +136,7 @@ func (eng *Engine) GetNo(id string, date *time.Time) string {
 		return primitive.NewObjectID().Hex()
 	}
 
-	ret, e := eng.ClaimString(id, date)
+	ret, e := eng.ClaimString(id, parseDate, date)
 	if e != nil {
 		return primitive.NewObjectID().Hex()
 	}
