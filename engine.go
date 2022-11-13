@@ -9,7 +9,6 @@ import (
 	"git.kanosolution.net/kano/dbflex"
 	"git.kanosolution.net/kano/dbflex/orm"
 	"github.com/sebarcode/codekit"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Engine struct {
@@ -127,19 +126,19 @@ func (eng *Engine) ClaimString(id string, parseDate bool, date time.Time) (strin
 	return fmt.Sprintf(format, i), nil
 }
 
-func (eng *Engine) GetNo(id string, parseDate bool, date time.Time) string {
+func (eng *Engine) GetNo(id string, parseDate bool, date time.Time) (string, error) {
 	var e error
 	conn := eng.conn
 	ns := new(Sequence)
 	ns.ID = id
 	if e = orm.Get(conn, ns); e != nil {
-		return primitive.NewObjectID().Hex()
+		return "", e
 	}
 
 	ret, e := eng.ClaimString(id, parseDate, date)
 	if e != nil {
-		return primitive.NewObjectID().Hex()
+		return "", e
 	}
 
-	return ret
+	return ret, nil
 }
