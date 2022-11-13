@@ -98,7 +98,7 @@ func TestGetNo(t *testing.T) {
 	ns.Format = "GN%05d"
 	ns.Save()
 
-	res := numseq.GetNo("GetNo")
+	res, _ := numseq.GetNo("GetNo")
 	if res != "GN00001" {
 		t.Fatal("expect GN00001 got " + res)
 	}

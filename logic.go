@@ -7,7 +7,6 @@ import (
 
 	"git.kanosolution.net/kano/dbflex"
 	"github.com/ariefdarmawan/datahub"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type NumberStatus string
@@ -149,17 +148,17 @@ func (s *Sequence) Save() error {
 	return nil
 }
 
-func GetNo(id string) string {
+func GetNo(id string) (string, error) {
 	var e error
 	ns := new(Sequence)
 	if e = dh.GetByID(ns, id); e != nil {
-		return primitive.NewObjectID().Hex()
+		return "", e
 	}
 
 	ret, e := ns.ClaimString()
 	if e != nil {
-		return primitive.NewObjectID().Hex()
+		return "", e
 	}
 
-	return ret
+	return ret, nil
 }
